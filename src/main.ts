@@ -4,9 +4,12 @@ import { getUsers } from './services/apiUserService';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
+
 if (!app) {
   throw new Error('No se encontró el elemento #app');
 }
+
+let users: User[] = [];
 
 function renderUsers(users: User[]): void {
   app.innerHTML = `
@@ -98,41 +101,53 @@ function renderUsers(users: User[]): void {
   `;
 }
 
-async function loadUser(): Promise<void> {
-
+async function loadUsers(): Promise<void> {
   app.innerHTML = `
-  <main class="min-h-screen bg-gray-100 p-6">
-    <div class="mx-auto max-w-7xl">
-      <div class="rounded-lg bg-white p-6 text-gray-600 shadow">
-        Cargando usuarios...
+    <main class="min-h-screen bg-gray-100 p-6">
+      <div class="mx-auto max-w-7xl">
+        <div class="rounded-lg bg-white p-6 text-gray-600 shadow">
+          Cargando usuarios...
+        </div>
       </div>
-    </div>
-  </main>
-`;
+    </main>
+  `;
 
   try {
-    // await new Promise(resolve => setTimeout(resolve, 3000));
-    
-    const users = await getUsers();
 
-    renderUsers(users)
+    users = await getUsers();
 
-  } catch (error) {
+    renderUsers(users);
 
+  } catch (error)
+   {
     console.error(error);
 
     app.innerHTML = `
       <main class="min-h-screen bg-gray-100 p-6">
-        <div class="mx-auto max-w-7xl">
-          <div class="rounded-lg bg-red-50 p-6 text-red-700">
-            No se pudieron cargar los usuarios.
-          </div>
+        <div class="rounded-lg bg-red-50 p-6 text-red-700">
+          No se pudieron cargar los usuarios.
         </div>
-      </main>
+      </div>
     `;
-    
   }
-  
 }
 
-loadUser()
+loadUsers()
+
+app.addEventListener('click', (event)=>{
+
+  const target = event.target as HTMLElement;
+
+  const action = target.dataset.action;
+  const userId = target.dataset.userId;
+
+  if (!action || !userId){
+    return;
+  }
+
+  console.log('Accion', action);
+  console.log('Usuario', userId);
+
+  
+
+});
