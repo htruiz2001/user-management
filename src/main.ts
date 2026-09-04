@@ -1,6 +1,6 @@
 import './style.css';
 import type {User} from './types/user';
-import { getUsers } from './services/apiUserService';
+import { getUsers, deleteUser, updateUser } from './services/apiUserService';
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
 
@@ -116,6 +116,12 @@ async function loadUsers(): Promise<void> {
 
     users = await getUsers();
 
+    // const updatedUser = await updateUser(1, {
+    // name: 'Usuario actualizado',
+    // });
+
+    // console.log(updatedUser);
+
     renderUsers(users);
 
   } catch (error)
@@ -134,7 +140,7 @@ async function loadUsers(): Promise<void> {
 
 loadUsers()
 
-app.addEventListener('click', (event)=>{
+app.addEventListener('click', async (event)=>{
 
   const target = event.target as HTMLElement;
 
@@ -145,9 +151,39 @@ app.addEventListener('click', (event)=>{
     return;
   }
 
-  console.log('Accion', action);
-  console.log('Usuario', userId);
+  // console.log('Accion', action);
+  // console.log('Usuario', userId);
 
-  
+  if (action === 'delete'){
 
+    const id = Number(userId);
+
+    const user = users.find((user) => user.id === id);
+
+    if (!user){
+      return;
+    }
+
+    const confirmed = confirm(`¿Estás seguro de eliminar a ${user.name}?`);
+
+    if (!confirmed){
+      return;
+    }
+
+    try {
+
+      await deleteUser(id);
+
+      users = users.filter((user) => user.id !== id);
+
+      renderUsers(users)
+
+    } catch (error) {
+      
+      console.error(error);
+      alert('No se pudo eliminar el usuario')
+      
+
+    }
+  }
 });
