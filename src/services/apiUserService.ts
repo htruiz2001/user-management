@@ -1,55 +1,68 @@
-import type {User} from '../types/user';
+import type {User, CreateUser} from '../types/user';
+import type { UserService } from './userService';
 
 const API_URL = 'https://jsonplaceholder.typicode.com/users';
 
-export async function getUsers(): Promise<User[]> {
-    
+export class ApiUserService implements UserService {
+
+  async getUsers(): Promise<User[]> {
     const response = await fetch(API_URL);
 
-    if(!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
 
     const users: User[] = await response.json();
 
     return users;
-}
+  }
 
-export async function deleteUser(id: number): Promise<void> {
-
-    const response = await fetch(`${API_URL}/${id}`, {
-        method: 'DELETE',
+  async createUser(user: CreateUser): Promise<User> {
+    const response = await fetch(API_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
     });
 
-    if (!response.ok){
-        throw new Error(`HTTP error: ${response.status}`);
-        
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
 
-}
+    const createdUser: User = await response.json();
 
-export async function updateUser(
+    return createdUser;
+  }
+
+  async updateUser(
     id: number,
-    user: Partial<User>
-): Promise<User> {
-
+    user: CreateUser
+  ): Promise<User> {
     const response = await fetch(`${API_URL}/${id}`, {
-        method: 'PUT',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-
-        body: JSON.stringify(user),
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(user),
     });
-    
-    if(!response.ok) {
-        throw new Error(`HTTP error: ${response.status}`);
-        
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
     }
 
-    const updateUser: User = await response.json();
+    const updatedUser: User = await response.json();
 
-    return updateUser;
-    
-    
+    return updatedUser;
+  }
+
+  async deleteUser(id: number): Promise<void> {
+    const response = await fetch(`${API_URL}/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP error: ${response.status}`);
+    }
+  }
 }
