@@ -1,9 +1,10 @@
+//Importaciones de dependencias
 import './style.css';
 import type {User} from './types/user';
 import { LocalUserService } from './services/localUserService';
 import { validateUserForm } from './utils/validation';
 // import type { UserService } from './services/userService';
-
+//
 const userService = new LocalUserService();
 
 const app = document.querySelector<HTMLDivElement>('#app')!;
