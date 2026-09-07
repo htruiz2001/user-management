@@ -2,7 +2,7 @@ import type { CreateUser, User } from '../types/user';
 import type { UserService } from './userService';
 
 const STORAGE_KEY = 'users';
-const API_URL = 'https://jsonplaceholder.typicode.com/users';
+const API_URL = import.meta.env.VITE_API_UR;
 
 export class LocalUserService implements UserService {
 
